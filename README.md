@@ -1,4 +1,4 @@
-# Simple-email-spoofer
+# Simple email spoofer
 Python based email spoofer. Tested with python 2.7 and 3.7.
 
 > *For educational purposes only. Do not send to or from addresses that you do not own.* 
@@ -20,7 +20,7 @@ Therefore, if the message is analyzed the original sending address can be quickl
 Further, some email service providers (e.g., Gmail) automatically replace the forged email
 in the 'From:' field with the sending email leaving in the end just the spoofed name. Example:
 
-From: Spoofed name <original@email.com>
+From: Spoofed name &lt;original@email.com&gt;
 
 Note: It could be required that you allow un-trusted application to send emails from
 your acount for this mode to work. Check your email provider account's settings.
