@@ -16,7 +16,7 @@ usage: mail.py [-h] [--tls] {weak,full}
 positional arguments:  
   {weak,full}  Mode of operation
 
-  optional arguments:
+  optional arguments:  
     -h, --help   show this help message and exit  
       --tls        Add this option if you want to connect to the MX using STARTTLS  
                      in full mode
