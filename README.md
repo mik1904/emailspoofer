@@ -11,7 +11,7 @@ Python based email spoofer. Tested with python 2.7 and 3.7.
 - [argparse](https://pypi.org/project/argparse/)
 
 ## Functionalities 
-```bash
+```
 usage: mail.py [-h] [--tls] {weak,full}
 
 positional arguments:  
