@@ -11,6 +11,7 @@ Python based email spoofer. Tested with python 2.7 and 3.7.
 - [argparse](https://pypi.org/project/argparse/)
 
 ## Functionalities 
+```bash
 usage: mail.py [-h] [--tls] {weak,full}
 
 positional arguments:  
@@ -20,7 +21,7 @@ positional arguments:
     -h, --help   show this help message and exit  
       --tls        Add this option if you want to connect to the MX using STARTTLS  
                      in full mode
-
+```
 The scripts operates in two modes:
 #### 1. weak
 In this mode it is required that you own an e-mail account on an e-mail provider.
