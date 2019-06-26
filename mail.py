@@ -153,7 +153,7 @@ for ans in answers:
             sys.exit(3)
         else:
             print("[SYSTEM]: Mail sent")
-            sys.exit(1)
+            sys.exit(0)
 
     except Exception as err:
         print(err)
