@@ -63,7 +63,7 @@ if args.mode == "weak":
         server.ehlo()
         server.login(email_sender, password)
         server.sendmail(email_sender, email_receiver, text)
-        server.sendmail(spoof_sender, email_receiver, text)
+        #server.sendmail(spoof_sender, email_receiver, text)
         print("[SYSTEM]: e-mail succesfully sent")
         server.close()
     except Exception as err:
